@@ -1,12 +1,28 @@
-import { NextResponse } from "next/server";
-import {prisma} from '@/lib/prisma'
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { auth } from '@/auth'
 
-export async function DELETE(req:Request,{params}:{params :Promise<{id:string}>}){
-    const {id} = await params
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth()
 
-    await prisma.todo.delete({
-        where:{id:Number(id)}
-    })
+  if (!session?.user?.id) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    )
+  }
 
-    return NextResponse.json({message:'Todo Deleted'})
+  const { id } = await params
+
+  await prisma.todo.delete({
+    where: {
+      id: Number(id),
+      userId: session.user.id
+    }
+  })
+
+  return NextResponse.json({ message: 'Todo deleted' })
 }

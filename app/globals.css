@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─── Dark Theme (default) ─── */
+:root,
+[data-theme="dark"] {
+  --bg-primary: #080808;
+  --bg-card: #0F0F0F;
+  --bg-input: rgba(255, 255, 255, 0.03);
+  --bg-input-hover: rgba(255, 255, 255, 0.05);
+  --bg-subtle: rgba(255, 255, 255, 0.05);
+
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.3);
+  --text-faint: rgba(255, 255, 255, 0.2);
+  --text-ghost: rgba(255, 255, 255, 0.15);
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.2);
+
+  --accent: #C9A84C;
+  --accent-hover: #D4B85C;
+  --accent-dark: #8B6914;
+  --accent-muted: rgba(201, 168, 76, 0.6);
+  --accent-bg: rgba(201, 168, 76, 0.1);
+  --accent-border: rgba(201, 168, 76, 0.3);
+  --accent-glow: rgba(201, 168, 76, 0.2);
+
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.1);
+  --danger-border: rgba(248, 113, 113, 0.2);
+
+  --success: #34d399;
+
+  --github-bg: rgba(255, 255, 255, 0.05);
+  --github-bg-hover: rgba(255, 255, 255, 0.1);
+  --github-border: rgba(255, 255, 255, 0.1);
+  --github-text: #ffffff;
+}
+
+/* ─── Light Theme ─── */
+[data-theme="light"] {
+  --bg-primary: #F5F3EF;
+  --bg-card: #FFFFFF;
+  --bg-input: #F8F6F2;
+  --bg-input-hover: #F0EDE6;
+  --bg-subtle: #EDE9E0;
+
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-muted: #9B9B9B;
+  --text-faint: #B5B5B5;
+  --text-ghost: #CBCBCB;
+
+  --border: #E5E1D8;
+  --border-hover: #D0C9BC;
+
+  --accent: #B89530;
+  --accent-hover: #C9A84C;
+  --accent-dark: #8B6914;
+  --accent-muted: rgba(184, 149, 48, 0.7);
+  --accent-bg: rgba(184, 149, 48, 0.08);
+  --accent-border: rgba(184, 149, 48, 0.25);
+  --accent-glow: rgba(184, 149, 48, 0.12);
+
+  --danger: #dc2626;
+  --danger-bg: rgba(220, 38, 38, 0.06);
+  --danger-border: rgba(220, 38, 38, 0.15);
+
+  --success: #16a34a;
+
+  --github-bg: #F5F3EF;
+  --github-bg-hover: #EDE9E0;
+  --github-border: #E5E1D8;
+  --github-text: #1A1A1A;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-dm-sans);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Smooth transitions for theme-aware elements */
+[data-theme] * {
+  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+/* Override for elements that have their own explicit transitions */
+[data-theme] button,
+[data-theme] input,
+[data-theme] textarea {
+  transition-property: background-color, border-color, color, box-shadow, opacity, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
 }

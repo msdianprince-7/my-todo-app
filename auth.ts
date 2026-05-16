@@ -3,9 +3,10 @@ import GitHub from 'next-auth/providers/github'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from './lib/prisma'
+import { authConfig } from './auth.config'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
+  ...authConfig,
   providers: [
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID!,
@@ -37,6 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     })
   ],
   callbacks: {
+    ...authConfig.callbacks,
     async signIn({ user, account }) {
       if (account?.provider === 'github') {
         const existing = await prisma.user.findUnique({
@@ -69,8 +71,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token
     }
   },
-  pages: {
-    signIn: '/login',
-  },
-  session: { strategy: 'jwt' }
 })

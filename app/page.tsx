@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { signOut, useSession } from 'next-auth/react'
+import ThemeToggle from './components/ThemeToggle'
 
 interface Todo {
   id: number
@@ -22,7 +24,11 @@ export default function Home() {
   async function fetchTodos() {
     const res = await fetch('/api/todos')
     const data = await res.json()
-    setTodos(data)
+    if (Array.isArray(data)) {
+      setTodos(data)
+    } else {
+      setTodos([])
+    }
   }
 
   async function addTodo() {
@@ -59,75 +65,87 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080808] text-white">
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
 
       {/* Gold top border line */}
-      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent" />
+      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent" />
 
       {/* Nav */}
-      <nav className="flex items-center justify-between px-10 py-6 max-w-6xl mx-auto border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C9A84C] to-[#8B6914] flex items-center justify-center shadow-lg shadow-[#C9A84C]/20">
-            <span className="text-black text-xs font-black">✦</span>
-          </div>
-          <div>
-            <p className="text-white font-bold tracking-widest text-sm uppercase">Clarity</p>
-            <p className="text-[#C9A84C]/60 text-[10px] tracking-widest uppercase">AI Task Manager</p>
-          </div>
-        </div>
+      <nav className="flex items-center justify-between px-10 py-6 max-w-6xl mx-auto" style={{ borderBottom: '1px solid var(--border)' }}>
+  <div className="flex items-center gap-3">
+    <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(to bottom right, var(--accent), var(--accent-dark))`, boxShadow: '0 4px 12px var(--accent-glow)' }}>
+      <span className="text-black text-xs font-black">✦</span>
+    </div>
+    <div>
+      <p className="font-bold tracking-widest text-sm uppercase" style={{ color: 'var(--text-primary)' }}>Clarity</p>
+      <p className="text-[10px] tracking-widest uppercase" style={{ color: 'var(--accent-muted)' }}>AI Task Manager</p>
+    </div>
+  </div>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-white/30 text-[11px] uppercase tracking-widest">
-              {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
-            </p>
-            <p className="text-white/60 text-xs">
-              {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
-            </p>
-          </div>
-          <div className="h-8 w-px bg-white/10" />
-          <div className="bg-[#C9A84C]/10 border border-[#C9A84C]/30 text-[#C9A84C] text-xs px-4 py-2 rounded-full font-medium tracking-wide">
-            {todos.length} Tasks
-          </div>
-        </div>
-      </nav>
+  <div className="flex items-center gap-4">
+    <div className="text-right">
+      <p className="text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+        {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
+      </p>
+      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+        {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+      </p>
+    </div>
+    <div className="h-8 w-px" style={{ background: 'var(--border)' }} />
+    <div className="text-xs px-4 py-2 rounded-full font-medium tracking-wide" style={{ background: 'var(--accent-bg)', border: '1px solid var(--accent-border)', color: 'var(--accent)' }}>
+      {todos.length} Tasks
+    </div>
+    <div className="h-8 w-px" style={{ background: 'var(--border)' }} />
+    <ThemeToggle />
+    <div className="h-8 w-px" style={{ background: 'var(--border)' }} />
+    <button
+      onClick={() => signOut({ callbackUrl: '/login' })}
+      className="text-xs uppercase tracking-widest px-3 py-2 rounded-lg"
+      style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border-hover)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border)' }}
+    >
+      Sign Out
+    </button>
+  </div>
+</nav>
 
       <main className="max-w-6xl mx-auto px-10 py-10">
 
         {/* Page Title */}
         <div className="mb-10">
-          <h2 className="text-4xl font-bold text-white leading-tight tracking-tight">
-            Your Command <span className="text-[#C9A84C]">Center</span>
+          <h2 className="text-4xl font-bold leading-tight tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            Your Command <span style={{ color: 'var(--accent)' }}>Center</span>
           </h2>
-          <p className="text-white/30 text-sm mt-2 tracking-wide">
+          <p className="text-sm mt-2 tracking-wide" style={{ color: 'var(--text-muted)' }}>
             Plan with intention. Execute with precision.
           </p>
         </div>
 
         {/* AI Section — Full Width Hero */}
-        <div className="relative rounded-2xl overflow-hidden mb-8 border border-[#C9A84C]/20">
+        <div className="relative rounded-2xl overflow-hidden mb-8" style={{ border: '1px solid var(--accent-border)' }}>
           {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0F0F0F] via-[#111008] to-[#0A0800]" />
+          <div className="absolute inset-0" style={{ background: 'var(--bg-card)' }} />
           {/* Glow effects */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[#C9A84C] opacity-5 blur-3xl rounded-full" />
-          <div className="absolute bottom-0 left-0 w-60 h-40 bg-[#C9A84C] opacity-5 blur-3xl rounded-full" />
+          <div className="absolute top-0 right-0 w-80 h-80 rounded-full" style={{ background: 'var(--accent)', opacity: 0.05, filter: 'blur(48px)' }} />
+          <div className="absolute bottom-0 left-0 w-60 h-40 rounded-full" style={{ background: 'var(--accent)', opacity: 0.05, filter: 'blur(48px)' }} />
           {/* Gold corner accent */}
-          <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-[#C9A84C]/40 rounded-tl-2xl" />
-          <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-[#C9A84C]/40 rounded-br-2xl" />
+          <div className="absolute top-0 left-0 w-24 h-24 rounded-tl-2xl" style={{ borderTop: '2px solid var(--accent-border)', borderLeft: '2px solid var(--accent-border)' }} />
+          <div className="absolute bottom-0 right-0 w-24 h-24 rounded-br-2xl" style={{ borderBottom: '2px solid var(--accent-border)', borderRight: '2px solid var(--accent-border)' }} />
 
           <div className="relative z-10 p-8">
             <div className="flex items-start justify-between gap-8">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-1.5 h-1.5 bg-[#C9A84C] rounded-full animate-pulse" />
-                  <span className="text-[#C9A84C] text-[11px] font-semibold uppercase tracking-[0.2em]">
+                  <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--accent)' }}>
                     AI Generation
                   </span>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-1">
+                <h3 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                   Describe your goal
                 </h3>
-                <p className="text-white/30 text-sm mb-6">
+                <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
                   Llama 3.3 · 70B will craft 5 precise tasks from your intent.
                 </p>
 
@@ -136,18 +154,29 @@ export default function Home() {
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="e.g. I want to build and launch my portfolio website this weekend..."
                   rows={3}
-                  className="w-full bg-white/[0.03] border border-white/10 hover:border-[#C9A84C]/30 focus:border-[#C9A84C]/50 rounded-xl px-5 py-4 text-sm text-white/80 placeholder:text-white/20 outline-none resize-none transition-all duration-300 leading-relaxed"
+                  className="w-full rounded-xl px-5 py-4 text-sm outline-none resize-none leading-relaxed"
+                  style={{
+                    background: 'var(--bg-input)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-secondary)',
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = 'var(--accent-border)'}
+                  onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
                 />
 
                 <div className="flex items-center justify-between mt-4">
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-white/25 text-xs tracking-wide">Groq · Llama 3.3 70B Versatile</span>
+                    <span className="text-xs tracking-wide" style={{ color: 'var(--text-faint)' }}>Groq · Llama 3.3 70B Versatile</span>
                   </div>
                   <button
                     onClick={generateWithAI}
                     disabled={aiLoading || !prompt.trim()}
-                    className="relative group flex items-center gap-2.5 bg-gradient-to-r from-[#C9A84C] to-[#A8872A] hover:from-[#D4B85C] hover:to-[#C9A84C] text-black text-sm px-6 py-3 rounded-xl font-bold transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-[#C9A84C]/20 hover:shadow-[#C9A84C]/40"
+                    className="relative group flex items-center gap-2.5 text-black text-sm px-6 py-3 rounded-xl font-bold disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{
+                      background: `linear-gradient(to right, var(--accent), var(--accent-dark))`,
+                      boxShadow: '0 4px 16px var(--accent-glow)',
+                    }}
                   >
                     {aiLoading ? (
                       <>
@@ -169,10 +198,10 @@ export default function Home() {
 
           {/* Quick Add */}
           <div className="col-span-1">
-            <div className="bg-[#0F0F0F] border border-white/8 rounded-2xl p-6 h-full">
+            <div className="rounded-2xl p-6 h-full" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
               <div className="flex items-center gap-2 mb-5">
-                <div className="w-1 h-4 bg-[#C9A84C] rounded-full" />
-                <h3 className="text-sm font-semibold text-white tracking-wide">Quick Add</h3>
+                <div className="w-1 h-4 rounded-full" style={{ background: 'var(--accent)' }} />
+                <h3 className="text-sm font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>Quick Add</h3>
               </div>
 
               <textarea
@@ -180,30 +209,44 @@ export default function Home() {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Type a task..."
                 rows={4}
-                className="w-full bg-white/[0.03] border border-white/8 hover:border-[#C9A84C]/20 focus:border-[#C9A84C]/40 rounded-xl px-4 py-3 text-sm text-white/70 placeholder:text-white/15 outline-none resize-none transition-all duration-300"
+                className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
+                style={{
+                  background: 'var(--bg-input)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-secondary)',
+                }}
+                onFocus={(e) => e.currentTarget.style.borderColor = 'var(--accent-border)'}
+                onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
               />
 
               <button
                 onClick={addTodo}
                 disabled={loading || !title.trim()}
-                className="w-full mt-3 border border-[#C9A84C]/40 hover:border-[#C9A84C] hover:bg-[#C9A84C]/5 text-[#C9A84C] text-sm py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-30 tracking-wide"
+                className="w-full mt-3 text-sm py-3 rounded-xl font-semibold disabled:opacity-30 tracking-wide"
+                style={{
+                  border: '1px solid var(--accent-border)',
+                  color: 'var(--accent)',
+                  background: 'transparent',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-bg)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--accent-border)'; e.currentTarget.style.background = 'transparent' }}
               >
                 {loading ? 'Adding...' : '+ Add Task'}
               </button>
 
               {/* Stats */}
-              <div className="mt-6 pt-5 border-t border-white/5 space-y-4">
+              <div className="mt-6 pt-5 space-y-4" style={{ borderTop: '1px solid var(--border)' }}>
                 <div className="flex justify-between items-center">
-                  <span className="text-white/30 text-xs uppercase tracking-widest">Total</span>
-                  <span className="text-white font-bold">{todos.length}</span>
+                  <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Total</span>
+                  <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{todos.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-white/30 text-xs uppercase tracking-widest">Pending</span>
-                  <span className="text-[#C9A84C] font-bold">{todos.filter(t => !t.done).length}</span>
+                  <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Pending</span>
+                  <span className="font-bold" style={{ color: 'var(--accent)' }}>{todos.filter(t => !t.done).length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-white/30 text-xs uppercase tracking-widest">Done</span>
-                  <span className="text-emerald-400 font-bold">{todos.filter(t => t.done).length}</span>
+                  <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Done</span>
+                  <span className="font-bold" style={{ color: 'var(--success)' }}>{todos.filter(t => t.done).length}</span>
                 </div>
               </div>
             </div>
@@ -212,27 +255,36 @@ export default function Home() {
           {/* Task List */}
           <div className="col-span-2">
             {todos.length === 0 ? (
-              <div className="bg-[#0F0F0F] border border-white/8 rounded-2xl flex flex-col items-center justify-center py-20 text-center">
+              <div className="rounded-2xl flex flex-col items-center justify-center py-20 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                 <div className="text-5xl mb-4 opacity-40">✦</div>
-                <p className="text-white/50 font-medium mb-1">No tasks yet</p>
-                <p className="text-white/20 text-sm">Generate with AI or add one manually</p>
+                <p className="font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>No tasks yet</p>
+                <p className="text-sm" style={{ color: 'var(--text-faint)' }}>Generate with AI or add one manually</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {todos.map((todo, i) => (
                   <div
                     key={todo.id}
-                    className="group flex items-start gap-4 bg-[#0F0F0F] border border-white/8 hover:border-[#C9A84C]/30 rounded-2xl px-5 py-4 transition-all duration-300 hover:bg-[#111008]"
-                    style={{ animationDelay: `${i * 40}ms` }}
+                    className="group flex items-start gap-4 rounded-2xl px-5 py-4"
+                    style={{
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border)',
+                      animationDelay: `${i * 40}ms`,
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-border)'; e.currentTarget.style.background = 'var(--bg-input)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-card)' }}
                   >
-                    <div className="w-5 h-5 rounded-full border border-white/20 mt-0.5 flex-shrink-0 group-hover:border-[#C9A84C]/60 transition-colors duration-300 flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div
+                      className="w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center"
+                      style={{ border: '1px solid var(--border-hover)' }}
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'var(--accent)' }} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white/80 text-sm leading-relaxed group-hover:text-white transition-colors duration-200">
+                      <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                         {todo.title}
                       </p>
-                      <p className="text-white/20 text-[11px] mt-1.5 tracking-wide">
+                      <p className="text-[11px] mt-1.5 tracking-wide" style={{ color: 'var(--text-faint)' }}>
                         {new Date(todo.createdAt).toLocaleTimeString('en-US', {
                           hour: '2-digit', minute: '2-digit'
                         })} · {new Date(todo.createdAt).toLocaleDateString('en-US', {
@@ -243,7 +295,13 @@ export default function Home() {
                     <button
                       onClick={() => deleteTodo(todo.id)}
                       disabled={deletingId === todo.id}
-                      className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg border border-white/10 hover:border-red-500/40 hover:bg-red-500/10 flex items-center justify-center text-white/30 hover:text-red-400 transition-all duration-200 flex-shrink-0 text-base"
+                      className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-base"
+                      style={{
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-muted)',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--danger-border)'; e.currentTarget.style.background = 'var(--danger-bg)'; e.currentTarget.style.color = 'var(--danger)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
                     >
                       {deletingId === todo.id ? '·' : '×'}
                     </button>
@@ -256,7 +314,7 @@ export default function Home() {
       </main>
 
       {/* Gold bottom border */}
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[#C9A84C]/30 to-transparent mt-10" />
+      <div className="h-[1px] w-full mt-10" style={{ background: 'linear-gradient(to right, transparent, var(--accent-border), transparent)' }} />
     </div>
   )
 }
